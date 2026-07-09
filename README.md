@@ -1,4 +1,3 @@
-# agatasabot
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -75,7 +74,7 @@
 </div>
 
 <script>
-    // ※ここにGASで発行したWebアプリURLを貼り付けてください
+    // https://script.google.com/macros/s/AKfycbzhyOTKGaqMmobs70TTVxpxnzYD_k0gHI1nSm81YTpWUeHAShHOoKPdTa1IysY07dtY/exec
     const GAS_URL = "ここにGASで発行したURLを貼り付けます";
 
     // 画面開いた時の初期設定（30日制限）
@@ -168,7 +167,7 @@
         btn.disabled = true;
         btn.textContent = "送信中...";
 
-        fetch(https://script.google.com/macros/s/AKfycbzhyOTKGaqMmobs70TTVxpxnzYD_k0gHI1nSm81YTpWUeHAShHOoKPdTa1IysY07dtY/exec, {
+        fetch(GAS_URL, {
             method: "POST",
             body: new URLSearchParams(data)
         })
