@@ -73,7 +73,7 @@ option:disabled{color:#94a3b8;background-color:#f1f5f9;}
 </form>
 </div>
 <script>
-const GAS_URL="https://script.google.com/macros/s/AKfycby3AVFke1pvfRnM4_ukJh8sqmQU_5SQ7rTRPYA-S77-8HnjGptYld-bs5POcLloyx1k/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbzJNjlY_oPkqn_LOctNvkVyzb9iilJneNNbeQhSSMj-RH0GNSmQChvVFw0xXZGwI0br/exec";
 const dateInput=document.getElementById('reserveDate');
 const today=new Date();
 
@@ -151,7 +151,7 @@ dateInput.addEventListener('blur', function() {
     const parts = this.value.split('-');
     const selectedCheck = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10)).getTime();
     // ★【追加】土日（曜日）のチェックを追加
-    const selectedDay = new Date(parseInt(parts, 10), parseInt(parts, 10) - 1, parseInt(parts, 10)).getDay(); // 0:日, 6:土
+   const selectedDay = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10)).getDay(); // 0:日, 6:土
     if (selectedDay === 0 || selectedDay === 6) {
         alert("土曜日・日曜日は定休日です。\n平日の日付を選択してください。");
         this.value = "";
