@@ -98,37 +98,12 @@ const tf=document.getElementById('trialFields');
 if(type==='体験'){tf.style.display='block';}else{tf.style.display='none';const s=document.getElementById('desiredTask');s.value='';s.classList.remove('has-value');}
 if(dateInput.value)fetchAvailableSlots(dateInput.value);
 }
-function handleDateChange(input){
-    if(!input.value) {
-        input.classList.remove('has-value');
-        return;
-    }
+// ★ここから追加
+dateInput.value = dateInput.min;
+dateInput.classList.add('has-value');
+fetchAvailableSlots(dateInput.value);
+// ★ここまで追加
 
-    // 選択された日付
-    const selectedDate = new Date(input.value);
-    selectedDate.setHours(0,0,0,0);
-
-    // 今日の日付（時間をリセット）
-    const today = new Date();
-    today.setHours(0,0,0,0);
-
-    // ★当日、または過去の日付が選ばれたらリセットする
-    if (selectedDate <= today) {
-        alert("当日および過去の予約はできません。\n明日以降の日付を選択してください。");
-        input.value = ""; // 選択をクリア
-        input.classList.remove('has-value');
-        
-        // 時間選択のドロップダウンも初期化
-        const ts = document.getElementById('reserveTime');
-        ts.innerHTML = '<option value="">-- 日にちを先に選んでください --</option>';
-        ts.disabled = true;
-        return;
-    }
-
-    // 正常な日付（明日以降）であれば処理を続行
-    input.classList.add('has-value');
-    fetchAvailableSlots(input.value);
-}
 
 function handleTimeChange(select){if(select.value){select.classList.add('has-value');}else{select.classList.remove('has-value');}}
 function fetchAvailableSlots(dateStr){
@@ -152,13 +127,12 @@ ts.disabled=false;
 .catch(err=>{ts.innerHTML='<option value="">エラー発生</option>';el.innerText="【エラー】: "+err.message;el.style.display="block";alert("取得失敗:\n"+err.message);})
 .finally(()=>{lt.style.display="none";});
 }
-// iPhoneでカレンダーを開いただけで勝手に発火するのを防ぐ対策
+// iPhoneの発火バグと時差・範囲無視を完璧に防ぐチェック処理
 let isChanging = false;
 dateInput.addEventListener('change', () => { isChanging = true; });
 
-// カレンダーを閉じて、日付の選択が完全に「確定」した時だけ処理を実行する
 dateInput.addEventListener('blur', function() {
-    if (!isChanging) return; // 実際に値が変わっていなければ何もしない
+    if (!isChanging) return; 
     isChanging = false;
 
     if (!this.value) {
@@ -166,15 +140,21 @@ dateInput.addEventListener('blur', function() {
         return;
     }
 
-    // 選択された日付をセット（タイムゾーンのズレ防止のため時間を12時に設定）
-    const selectedDate = new Date(this.value + "T12:00:00");
-    const today = new Date();
-    today.setHours(0,0,0,0);
+    const now = new Date();
+    const tYear = now.getFullYear();
+    const tMonth = now.getMonth();
+    const tDate = now.getDate();
 
-    // 当日、または過去の日付が選ばれた場合のチェック
-    if (selectedDate <= today) {
-        alert("当日および過去の予約はできません。\n明日以降の日付を選択してください。");
-        this.value = ""; // 選択をクリア
+    const minCheck = new Date(tYear, tMonth, tDate + 1).getTime();
+    const maxCheck = new Date(tYear, tMonth, tDate + 30).getTime();
+
+    const parts = this.value.split('-');
+    const selectedCheck = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10)).getTime();
+
+    // 範囲外（明日より前、または30日後より先）を完全に弾く
+    if (selectedCheck < minCheck || selectedCheck > maxCheck) {
+        alert("予約は【明日から30日先まで】の間で選択してください。");
+        this.value = ""; 
         this.classList.remove('has-value');
         
         const ts = document.getElementById('reserveTime');
@@ -183,7 +163,6 @@ dateInput.addEventListener('blur', function() {
         return;
     }
 
-    // 正常な日付（明日以降）であれば処理を続行
     this.classList.add('has-value');
     fetchAvailableSlots(this.value);
 });
