@@ -76,10 +76,19 @@ option:disabled{color:#94a3b8;background-color:#f1f5f9;}
 const GAS_URL="https://script.google.com/macros/s/AKfycbz8s9kvntKunvDdUGG4caJuzDnWpxndllkOhPmrA8FyYGzlkxCJ1nicgcRThTC9pfls/exec";
 const dateInput=document.getElementById('reserveDate');
 const today=new Date();
+
+// 最小値（予約できる最初の日）を「明日」に設定
+const minDate=new Date();
+minDate.setDate(today.getDate() + 1);
+
+// 最大値（予約できる最後の日）を「30日後」に設定
 const maxDate=new Date();
-maxDate.setDate(today.getDate()+30);
-dateInput.min=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+maxDate.setDate(today.getDate() + 30);
+
+// カレンダーの選択可能範囲を設定
+dateInput.min=`${minDate.getFullYear()}-${String(minDate.getMonth()+1).padStart(2,'0')}-${String(minDate.getDate()).padStart(2,'0')}`;
 dateInput.max=`${maxDate.getFullYear()}-${String(maxDate.getMonth()+1).padStart(2,'0')}-${String(maxDate.getDate()).padStart(2,'0')}`;
+
 function selectType(type,hours){
 document.getElementById('reserveType').value=type;
 document.getElementById('duration').value=hours;
